@@ -97,8 +97,28 @@ export class StatusComponent {
       this.status = status;
     });
   }
+  
+  get currentStatus() {
+    return this.monitor.currentStatus
+  }
+
+  runManualCheck(){
+    this.monitor.runManualCheck((newStatus) => {
+      // Do anything with new status E.g:
+      status = newStatus;
+    })
+  }
 }
 ```
+
+---
+
+## 🔑 Additional Properties 
+
+| Property                      | Description                                               |
+| ----------------------------- | --------------------------------------------------------- |
+| *.currentStatus               | Gets the current network status                           |
+| *.runManualCheck(`callback`)  | Triggers the network status check manually and accepts an optional callback which returns the new status |
 
 ---
 

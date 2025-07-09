@@ -1,6 +1,6 @@
 {
   "name": "ngx-network-monitor",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "Angular service for monitoring online/offline and poor network conditions",
   "author": "MadeByRaymond (Daniel Obiekwe)",
   "keywords": ["angular", "network", "offline", "online", "connection", "monitor", "connectivity", "internet", "speed", "ping"],
@@ -30,7 +30,7 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
-    "rxjs": "~7.5.0",
+    "rxjs": "~7.2.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

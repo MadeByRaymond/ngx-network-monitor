@@ -136,7 +136,11 @@ export class NetworkMonitorService {
       (latency !== null && latency > 1000);
   }
 
-  runManualCheck(): void {
-    this.checkConnection().subscribe((status) => this.updateStatus(status));
+  runManualCheck(callback?:(status:NetworkStatus) => void) {
+    this.checkConnection().subscribe((status) => {
+      this.updateStatus(status);
+      
+      !!callback && callback(status)
+    });
   }
 }
