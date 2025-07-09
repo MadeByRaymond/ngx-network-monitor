@@ -1,10 +1,18 @@
 {
   "name": "ngx-network-monitor",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Angular service for monitoring online/offline and poor network conditions",
   "author": "MadeByRaymond (Daniel Obiekwe)",
   "keywords": ["angular", "network", "offline", "online", "connection", "monitor", "connectivity", "internet", "speed", "ping"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MadeByRaymond/ngx-network-monitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MadeByRaymond/ngx-network-monitor/issues"
+  },
+  "homepage": "https://github.com/MadeByRaymond/ngx-network-monitor#readme",
   "peerDependencies": {
   "@angular/common": "^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
   "@angular/core": "^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
