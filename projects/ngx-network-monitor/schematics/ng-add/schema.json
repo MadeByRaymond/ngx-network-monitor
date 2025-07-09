@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "NgxNetworkMonitorAdd",
+  "title": "Add ngx-network-monitor",
+  "type": "object",
+  "properties": {
+    "pingPath": {
+      "type": "string",
+      "description": "Where to create the ping.txt file",
+      "default": "src/assets/ping.txt"
+    }
+  }
+}
