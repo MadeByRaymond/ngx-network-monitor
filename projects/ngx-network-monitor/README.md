@@ -58,12 +58,12 @@ Make sure your ping endpoint, url or file:
 
 Inject the service and subscribe to network status changes:
 ```ts
-import { NgxNetworkMonitorService, NetworkStatus } from 'ngx-network-monitor';
+import { NetworkMonitorService, NetworkStatus } from 'ngx-network-monitor';
 
 export class StatusComponent {
   status: NetworkStatus | null = null;
 
-  constructor(private monitor: NgxNetworkMonitorService) {
+  constructor(private monitor: NetworkMonitorService) {
     this.monitor.networkStatus$.subscribe((status) => {
       this.status = status;
     });
@@ -76,7 +76,7 @@ export class StatusComponent {
 ### Full Usage Example:
 ```ts
 import { Component } from '@angular/core';
-import { NgxNetworkMonitorService, NetworkStatus } from 'ngx-network-monitor';
+import { NetworkMonitorService, NetworkStatus } from 'ngx-network-monitor';
 
 @Component({
   selector: 'app-status',
@@ -92,7 +92,7 @@ import { NgxNetworkMonitorService, NetworkStatus } from 'ngx-network-monitor';
 export class StatusComponent {
   status: NetworkStatus | null = null;
 
-  constructor(private monitor: NgxNetworkMonitorService) {
+  constructor(private monitor: NetworkMonitorService) {
     this.monitor.networkStatus$.subscribe((status) => {
       this.status = status;
     });
@@ -147,4 +147,12 @@ ng build ngx-network-monitor
 
 ## 🔒 License
 
-MIT © MadeByRaymond
+MIT © MadeByRaymond (Daniel Obiekwe)
+
+---
+
+## ❤️ Support
+
+If you find this package helpful, you can support our projects here:
+
+[![Buy Me a Smoothie](https://img.buymeacoffee.com/button-api/?text=Buy%20Me%20a%20Smoothie&emoji=🍹&slug=MadeByRaymond&button_colour=FFDD00&font_colour=000000&font_family=Comic&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/MadeByRaymond)

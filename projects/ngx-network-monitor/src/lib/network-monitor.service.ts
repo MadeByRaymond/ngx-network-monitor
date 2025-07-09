@@ -15,7 +15,7 @@ export interface NetworkStatus {
 @Injectable({
   providedIn: 'root'
 })
-export class NgxNetworkMonitorService {
+export class NetworkMonitorService {
   private status$ = new BehaviorSubject<NetworkStatus>({
     online: true,
     latency: null,
