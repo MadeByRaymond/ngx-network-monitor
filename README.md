@@ -4,6 +4,7 @@
 
 ![npm](https://img.shields.io/npm/v/ngx-network-monitor)
 ![Angular](https://img.shields.io/badge/angular-compatible-brightgreen)
+![NPM Downloads](https://img.shields.io/npm/d18m/ngx-network-monitor)
 ![License](https://img.shields.io/npm/l/ngx-network-monitor)
 
 ---
@@ -28,7 +29,7 @@ Or using Angular CLI:
 ```bash
 ng add ngx-network-monitor
 ```
-This will create a ping file in `src/assets/ping.txt` for you.
+This will create a ping file in `src/assets/ping.txt` for you, assuming _`src/assets/**`_ is a static file directory.
 
 ---
 
@@ -123,9 +124,9 @@ export class StatusComponent {
 ---
 
 ## 📁 Assets (for default setup)
-Ensure this file exists in your app if using the default ping path:
+Ensure this file exists in your app **_as a static file_** if using the default ping path:
 ```bash
-src/assets/ping.txt
+/assets/ping.txt
 ```
 
 If you prefer to ping a different static file / endpoint / url, you can change the default value as mentioned in the "🔧 Setup" section: 
