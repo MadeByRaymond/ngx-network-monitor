@@ -7,6 +7,9 @@
 ![NPM Downloads](https://img.shields.io/npm/d18m/ngx-network-monitor)
 ![License](https://img.shields.io/npm/l/ngx-network-monitor)
 
+**The best way to quickly integrate network monitoring with Angular.**
+Note that this package has been optimized to work best with Angular, but you can still use [network-monitor-js](https://www.npmjs.com/package/network-monitor-js) for your project if your prefer to work with vanilla JS/TS.
+
 ---
 
 ## 🚀 Features
@@ -106,7 +109,7 @@ export class StatusComponent {
   runManualCheck(){
     this.monitor.runManualCheck((newStatus) => {
       // Do anything with new status E.g:
-      status = newStatus;
+      this.status = newStatus;
     })
   }
 }
