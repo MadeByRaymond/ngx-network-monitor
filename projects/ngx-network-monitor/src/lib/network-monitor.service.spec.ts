@@ -1,7 +1,7 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NetworkMonitorService, NetworkStatus } from './network-monitor.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { PING_URL } from './tokens/ping-url.token';
+import { NETWORK_MONITOR_CONFIG } from './tokens/network-monitor-config.token';
 import { NgZone, PLATFORM_ID } from '@angular/core';
 
 describe('NetworkMonitorService', () => {
@@ -13,7 +13,13 @@ describe('NetworkMonitorService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         NetworkMonitorService,
-        { provide: PING_URL, useValue: '/assets/ping.txt' },
+        { provide: NETWORK_MONITOR_CONFIG, useValue: {
+          pingUrl: '/assets/ping.txt',
+          latencyThreshold: 1800,
+          slowConnectionTypes: ['2g', 'slow-2g', '3g'],
+          pingIntervalMs: 60000,
+          fallbackPingIntervalMs: 10000
+        }},
         { provide: PLATFORM_ID, useValue: 'browser' }, // simulate browser environment
         NgZone
       ]

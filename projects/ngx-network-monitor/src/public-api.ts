@@ -3,4 +3,5 @@
  */
 
 export * from './lib/network-monitor.service';
-export * from './lib/tokens/ping-url.token';
+export * from './lib/models/network-monitor-config.model';
+export * from './lib/tokens/network-monitor-config.token';

@@ -1,10 +1,10 @@
 {
   "name": "ngx-network-monitor",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Angular service for monitoring online/offline and poor network conditions",
   "author": "MadeByRaymond (Daniel Obiekwe)",
   "keywords": ["angular", "network", "offline", "online", "connection", "monitor", "connectivity", "internet", "speed", "ping"],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MadeByRaymond/ngx-network-monitor.git"
@@ -35,6 +35,7 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^13.3.11",
     "@angular/cli": "~13.3.3",
     "@angular/compiler-cli": "~13.3.0",
     "@types/jasmine": "~3.10.0",
@@ -45,6 +46,7 @@
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "ng-packagr": "^13.3.1",
     "typescript": "~4.6.2"
   }
 }

@@ -3,7 +3,8 @@ import { BehaviorSubject, interval, merge, fromEvent, of } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { PING_URL } from './tokens/ping-url.token';
+import { NETWORK_MONITOR_CONFIG } from './tokens/network-monitor-config.token';
+import { NetworkMonitorConfig } from './models/network-monitor-config.model';
 
 export interface NetworkStatus {
   online: boolean;
@@ -29,18 +30,37 @@ export class NetworkMonitorService {
     private http: HttpClient,
     private ngZone: NgZone,
     @Inject(PLATFORM_ID) platformId: Object,
-    @Inject(PING_URL) private pingUrl: string
+    @Inject(NETWORK_MONITOR_CONFIG) private config: NetworkMonitorConfig
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     if (this.isBrowser) {
       this.initMonitoring();
     }
+
+    this.config = { 
+      // Ensuring default config merging.
+      // To prevent overwrites of defaults of missing configurations to `undefined`
+      pingUrl: '/assets/ping.txt',
+      latencyThreshold: 1800,
+      slowConnectionTypes: ['2g', 'slow-2g', '3g'],
+      pingIntervalMs: 60000,
+      fallbackPingIntervalMs: 10000,
+      ...config
+    };
   }
 
+
+
+  /**
+   * Observe network status changes / updates
+   */
   get networkStatus$() {
     return this.status$.asObservable();
   }
 
+  /**
+   * Get the network current status. This returns a snapshot of the current value
+   */
   get currentStatus(): NetworkStatus { // Exposing current status snapshot
     return this.status$.value;
   }
@@ -62,7 +82,8 @@ export class NetworkMonitorService {
 
       // Listen for connection type change
       const connection = this.getNavigatorConnection();
-      if (!!connection) {
+      const hasConnection = (!!connection && !!connection?.addEventListener)
+      if (hasConnection) {
         connection.addEventListener('change', (e:any) => {
           const current = this.status$.value;
           this.updateStatus({
@@ -76,7 +97,7 @@ export class NetworkMonitorService {
       // Fallback Periodic connection checks
       // every one min if navigator connection is available
       // 10 seconds otherwise
-      const pollingInterval = connection ? 60000 : 10000;
+      const pollingInterval = hasConnection ? this.config.pingIntervalMs : this.config.fallbackPingIntervalMs;
       interval(pollingInterval)
         .pipe(startWith(0), switchMap(() => this.checkConnection()))
         .subscribe((status) => this.updateStatus(status));
@@ -100,7 +121,7 @@ export class NetworkMonitorService {
     const effectiveType = connection?.effectiveType;
     const startTime = performance.now();
 
-    return this.http.get(this.pingUrl, 
+    return this.http.get(this.config.pingUrl!, 
       { responseType: 'text', headers: new HttpHeaders({ 'X-Heartbeat': 'true' }) }
     ).pipe(
       map(() => {
@@ -122,20 +143,21 @@ export class NetworkMonitorService {
 
   private getNavigatorConnection(): any {
     return this.isBrowser
-      ? (navigator as any).connection ||
-          (navigator as any).mozConnection ||
-          (navigator as any).webkitConnection
+      ? (navigator as any)?.connection ||
+          (navigator as any)?.mozConnection ||
+          (navigator as any)?.webkitConnection
       : null;
   }
 
   private isPoorConnection(effectiveType: string | undefined, latency: number | null): boolean {
-    const slowTypes = ['2g', 'slow-2g', '3g'];
-    
     return !navigator.onLine ||
-      (effectiveType && slowTypes.includes(effectiveType)) ||
-      (latency !== null && latency > 1000);
+      (effectiveType && this.config.slowConnectionTypes?.includes(effectiveType)) ||
+      (latency !== null && latency > (this.config?.latencyThreshold || 1800));
   }
 
+  /**
+   * Manually trigger a network status check. This accepts an optional callback which returns the new status
+   */
   runManualCheck(callback?:(status:NetworkStatus) => void) {
     this.checkConnection().subscribe((status) => {
       this.updateStatus(status);

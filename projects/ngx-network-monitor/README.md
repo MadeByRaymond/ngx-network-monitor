@@ -7,6 +7,9 @@
 ![NPM Downloads](https://img.shields.io/npm/d18m/ngx-network-monitor)
 ![License](https://img.shields.io/npm/l/ngx-network-monitor)
 
+**The best way to quickly integrate network monitoring with Angular.**
+Note that this package has been optimized to work best with Angular, but you can still use [network-monitor-js](https://www.npmjs.com/package/network-monitor-js) for your project if your prefer to work with vanilla JS/TS.
+
 ---
 
 ## 🚀 Features
@@ -15,7 +18,8 @@
 - ✅ Measures latency using configurable ping endpoint
 - ✅ Monitors effective connection type (`5g`, `4g`, `3g`, etc.)
 - ✅ Flags poor connections automatically
-- ✅ SSR-compatible & configurable with `InjectionToken`
+- ✅ SSR-compatible & fully configurable via `NetworkMonitorConfig`
+- ✅ Simple setup with `ng add` (auto-generates a ping file)
 
 ---
 
@@ -37,15 +41,34 @@ This will create a ping file in `src/assets/ping.txt` for you, assuming _`src/as
 By default, the service pings `/assets/ping.txt` every few seconds (depending on browser connection support). You can customize the ping URL to a different static file, endpoint or url:
 
 ```ts
-import { PING_URL } from 'ngx-network-monitor';
+import { NetworkMonitorConfig, NETWORK_MONITOR_CONFIG } from 'ngx-network-monitor';
 
 @NgModule({
   providers: [
-    { provide: PING_URL, useValue: '/your-api/ping' }
+    {
+      provide: NETWORK_MONITOR_CONFIG,
+      useValue: {
+        pingUrl: '/your-api/ping',
+        poorConnectionLatency: 1800, // ms
+        // ...other configuration settings
+      } as NetworkMonitorConfig
+    }
   ]
 })
 export class AppModule {}
 ```
+### Additional Configurations:
+Additional configuration settings can be provided to customize how network connection is monitored:
+| Property                      | Description | Required? | Default |
+| ----------------------------- | ----------- | -------- | ------- |
+| pingUrl  | The URL to ping when checking connectivity. This should point to a small, cacheable file (e.g. a static file, endpoint or url) | optional | `/assets/ping.txt` |
+| latencyThreshold  | The latency threshold (in milliseconds) above which the connection is considered "slow" | optional | `1800` ms |
+| slowConnectionTypes  | List of `effectiveType` values that should be treated as slow connections | optional | `['slow-2g', '2g', '3g']` |
+| pingIntervalMs  | Default ping interval (in milliseconds) when the browser supports [Network Information API](https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API) | optional | `60000` (60 seconds) |
+| fallbackPingIntervalMs  | Default ping interval (in milliseconds) when the browser does `NOT` support Network Information API. As a result, this should ping much more frequently than `pingIntervalMs`. <br/><br/> Many browsers E.g: Firefox, Safari, IE, etc and devices E.g: macOS, iOS, etc, will fallback to this as Network Information API is typically not supported on them | optional | `10000` (10 seconds) |
+
+<i>💡 Tip: Importing `NetworkMonitorConfig` in your useValue ensures type-safety and IntelliSense autocompletion when setting configuration properties.</i>
+
 
 ### ✅ Requirements for Ping Endpoint
 Make sure your ping endpoint, url or file:
@@ -106,7 +129,7 @@ export class StatusComponent {
   runManualCheck(){
     this.monitor.runManualCheck((newStatus) => {
       // Do anything with new status E.g:
-      status = newStatus;
+      this.status = newStatus;
     })
   }
 }
@@ -119,7 +142,7 @@ export class StatusComponent {
 | Property                      | Description                                               |
 | ----------------------------- | --------------------------------------------------------- |
 | *.currentStatus               | Gets the current network status                           |
-| *.runManualCheck(`callback`)  | Triggers the network status check manually and accepts an optional callback which returns the new status |
+| *.runManualCheck(`callback?`)  | Triggers the network status check manually and accepts an optional callback which returns the new status |
 
 ---
 
@@ -132,11 +155,14 @@ Ensure this file exists in your app **_as a static file_** if using the default 
 If you prefer to ping a different static file / endpoint / url, you can change the default value as mentioned in the "🔧 Setup" section: 
 
 ```ts
-import { PING_URL } from 'ngx-network-monitor';
+import { NETWORK_MONITOR_CONFIG } from 'ngx-network-monitor';
 
 @NgModule({
   providers: [
-    { provide: PING_URL, useValue: '/your-api/ping' }
+    {
+      provide: NETWORK_MONITOR_CONFIG,
+      useValue: { pingUrl: '/your-api/ping' }
+    }
   ]
 })
 export class AppModule {}
@@ -147,10 +173,10 @@ export class AppModule {}
 
 | Feature         | Customizable       | Default                              |
 | --------------- | ------------------ | ------------------------------------ |
-| Ping URL        | ✅ `PING_URL` token | `/assets/ping.txt`              |
-| Ping Interval   | ✅ auto-adjusts     | 10s (no connection API) / 60s (with) |
+| Ping URL        | ✅ `pingUrl`  | `/assets/ping.txt`              |
+| Ping Interval   | ✅ auto-adjusts `pingIntervalMs` or `fallbackPingIntervalMs`    | 10s (no connection API) / 60s (with) |
 | Connection Type | ✅ uses browser API | Based on `navigator.connection`      |
-| Poor Connection | ✅ auto-detected    | Slow type or latency > 1000ms        |
+| Poor Connection | ✅ auto-detected    | Slow type or latency > 1800ms        |
 
 ---
 
@@ -168,7 +194,7 @@ ng build ngx-network-monitor
 
 ## 🔒 License
 
-MIT © MadeByRaymond (Daniel Obiekwe)
+Apache-2.0 © MadeByRaymond (Daniel Obiekwe)
 
 ---
 
