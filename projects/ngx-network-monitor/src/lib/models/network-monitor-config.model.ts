@@ -1,3 +1,5 @@
+export type SlowConnectionTypes = '2g' | 'slow-2g' | '3g' | '4g'
+
 /**
  * Configuration options for NetworkMonitorService
  */
@@ -25,7 +27,7 @@ export interface NetworkMonitorConfig {
    * 
    * Default: `['2g', 'slow-2g', '3g']`
    */
-  slowConnectionTypes?: string[];
+  slowConnectionTypes?: SlowConnectionTypes[];
 
   /**
    * Default ping interval (in milliseconds) when the

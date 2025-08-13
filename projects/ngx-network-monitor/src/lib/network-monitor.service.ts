@@ -4,7 +4,7 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { NETWORK_MONITOR_CONFIG } from './tokens/network-monitor-config.token';
-import { NetworkMonitorConfig } from './models/network-monitor-config.model';
+import { NetworkMonitorConfig, SlowConnectionTypes } from './models/network-monitor-config.model';
 
 export interface NetworkStatus {
   online: boolean;
@@ -26,27 +26,31 @@ export class NetworkMonitorService {
   
   private isBrowser: boolean;
 
+  private config:NetworkMonitorConfig;
+
   constructor(
     private http: HttpClient,
     private ngZone: NgZone,
     @Inject(PLATFORM_ID) platformId: Object,
-    @Inject(NETWORK_MONITOR_CONFIG) private config: NetworkMonitorConfig
+    @Inject(NETWORK_MONITOR_CONFIG) private networkMonitorconfig: NetworkMonitorConfig
   ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-    if (this.isBrowser) {
-      this.initMonitoring();
-    }
 
     this.config = { 
       // Ensuring default config merging.
       // To prevent overwrites of defaults of missing configurations to `undefined`
-      pingUrl: '/assets/ping.txt',
-      latencyThreshold: 1800,
-      slowConnectionTypes: ['2g', 'slow-2g', '3g'],
-      pingIntervalMs: 60000,
-      fallbackPingIntervalMs: 10000,
-      ...config
+      pingUrl: this.networkMonitorconfig?.pingUrl || '/assets/ping.txt',
+      latencyThreshold: this.networkMonitorconfig?.latencyThreshold || 1800,
+      slowConnectionTypes: this.networkMonitorconfig?.slowConnectionTypes || ['2g', 'slow-2g', '3g'],
+      pingIntervalMs: this.networkMonitorconfig?.pingIntervalMs || 60000,
+      fallbackPingIntervalMs: this.networkMonitorconfig?.fallbackPingIntervalMs || 10000
     };
+
+    this.isBrowser = isPlatformBrowser(platformId);
+    
+    if (this.isBrowser) {
+      this.initMonitoring();
+    }
+
   }
 
 
@@ -98,7 +102,8 @@ export class NetworkMonitorService {
       // every one min if navigator connection is available
       // 10 seconds otherwise
       const pollingInterval = hasConnection ? this.config.pingIntervalMs : this.config.fallbackPingIntervalMs;
-      interval(pollingInterval)
+      
+      interval(pollingInterval || 10000)
         .pipe(startWith(0), switchMap(() => this.checkConnection()))
         .subscribe((status) => this.updateStatus(status));
 
@@ -149,7 +154,7 @@ export class NetworkMonitorService {
       : null;
   }
 
-  private isPoorConnection(effectiveType: string | undefined, latency: number | null): boolean {
+  private isPoorConnection(effectiveType: SlowConnectionTypes | undefined, latency: number | null): boolean {
     return !navigator.onLine ||
       (effectiveType && this.config.slowConnectionTypes?.includes(effectiveType)) ||
       (latency !== null && latency > (this.config?.latencyThreshold || 1800));
